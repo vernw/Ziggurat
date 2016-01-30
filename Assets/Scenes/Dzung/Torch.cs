@@ -29,13 +29,11 @@ public class Torch : MonoBehaviour {
 		if (colliding) {
 			if (Input.GetKeyDown ("r")) {
 				if (isLit) {
-					isLit = false;
-					this.GetComponent<Renderer> ().material = matColor_regular;
-					ts.removeTorch (torchValue);
+					deactivate ();
+					ts.removeTorch (this);
 				} else {
-					isLit = true;
-					this.GetComponent<Renderer> ().material = matColor_lit;
-					ts.addTorch (torchValue);
+					activate ();
+					ts.addTorch (this);
 				}
 			}
 		}
@@ -48,6 +46,16 @@ public class Torch : MonoBehaviour {
 
 	void OnTriggerExit(Collider col) {
 		colliding = false;
+	}
+
+	public void activate() {
+		isLit = true;
+		this.GetComponent<Renderer> ().material = matColor_lit;
+	}
+
+	public void deactivate() {
+		isLit = false;
+		this.GetComponent<Renderer> ().material = matColor_regular;
 	}
 
 }

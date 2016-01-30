@@ -2,6 +2,8 @@ using UnityEngine;
 using System.Collections;
 
 public class Interactable : MonoBehaviour, IInteractable {
+  private GameObject interactionTrigger;
+  private bool colliding;
   private bool isCurrentlyInteracting;
   public bool IsCurrentlyInteracting {
     get {
@@ -19,17 +21,31 @@ public class Interactable : MonoBehaviour, IInteractable {
 
   void Awake() {
     IsCurrentlyInteracting = false;
+    colliding = false;
+    interactionTrigger = GameObject.FindWithTag("InteractionTrigger");
   }
 
   void Update() {
-    if (Input.GetKeyDown(interactKey)) {
-      onStartInteract();
-      IsCurrentlyInteracting = true;
-    } else if (Input.GetKeyUp(interactKey)) {
-      onStopInteract();
-      IsCurrentlyInteracting = false;
-    } else if (Input.GetKey(interactKey)) {
-      onDuringinteract();
+    if (colliding) {
+      if (Input.GetKeyDown(interactKey)) {
+        onStartInteract();
+        IsCurrentlyInteracting = true;
+      } else if (Input.GetKeyUp(interactKey)) {
+        onStopInteract();
+        IsCurrentlyInteracting = false;
+      } else if (Input.GetKey(interactKey)) {
+        onDuringinteract();
+      }
     }
+  }
+
+  void OnTriggerEnter(Collider col) {
+    if (col.gameObject == interactionTrigger)
+      colliding = true;
+  }
+
+  void OnTriggerExit(Collider col) {
+    if (col.gameObject == interactionTrigger)
+      colliding = false;
   }
 }

@@ -8,20 +8,38 @@ public class Torch : Interactable {
 	private TorchSequence ts;
 
 	private bool isLit;
+	public bool Light {
+    get {
+      return isLit;
+    }
+    set {
+      isLit = value;
+    }
+  }
 
 	void Start() {
 		ts = FindObjectOfType<TorchSequence> ();
 	}
 
-  public override void interact() {
+  public override void onStartInteract() {
     if (isLit) {
-      isLit = false;
-      this.GetComponent<Renderer> ().material = matColor_regular;
-      ts.removeTorch (torchValue);
+      deactivate();
+      ts.removeTorch (this);
     } else {
-      isLit = true;
-      this.GetComponent<Renderer> ().material = matColor_lit;
-      ts.addTorch (torchValue);
+      activate();
+      ts.addTorch (this);
     }
-	}
+
+    isLit = !isLit;
+  }
+
+  public void activate() {
+    isLit = true;
+    this.GetComponent<Renderer> ().material = matColor_lit;
+  }
+
+  public void deactivate() {
+    isLit = false;
+    this.GetComponent<Renderer> ().material = matColor_regular;
+  }
 }

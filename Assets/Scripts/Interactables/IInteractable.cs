@@ -3,7 +3,7 @@ using System.Collections;
 
 public interface IInteractable {
   bool IsCurrentlyInteracting { get; set; }
-  void interact();
+  void onDuringinteract();
   void onStartInteract();
   void onStopInteract();
 }

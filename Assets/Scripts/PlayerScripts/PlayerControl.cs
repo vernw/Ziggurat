@@ -3,6 +3,23 @@ using System.Collections;
 
 public class PlayerControl : MonoBehaviour
 {
+    [SerializeField]
+    private float _health = 100.0f;
+    public float health
+    {
+        get { return _health; }
+        set
+        {
+            _health = value;
+            if (_health > 100.0f)
+                _health = 100.0f;
+            else if (_health <= 0.0f)
+            {
+                _health = 0.0f;
+                dead = true;
+            }
+        }
+    }
 
 	public float walkSpeed = 0.15f;
 	public float runSpeed = 1.0f;
@@ -39,8 +56,8 @@ public class PlayerControl : MonoBehaviour
 
 	private bool run;
 	private bool sprint;
-
-	private bool isMoving;
+    private bool isMoving;
+    private bool dead = false;
 
 	// fly
 	private bool fly = false;
@@ -226,4 +243,9 @@ public class PlayerControl : MonoBehaviour
 	{
 		return sprint && !aim && (isMoving);
 	}
+
+    public bool isDead()
+    {
+        return dead;
+    }
 }

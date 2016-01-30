@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public abstract class Interactable : MonoBehaviour, IInteractable {
+public class Interactable : MonoBehaviour, IInteractable {
   private bool isCurrentlyInteracting;
   public bool IsCurrentlyInteracting {
     get {
@@ -13,9 +13,9 @@ public abstract class Interactable : MonoBehaviour, IInteractable {
   }
 
   public string interactKey = "r";
-  public abstract void interact();
-  public void onStartInteract() {}
-  public void onStopInteract() {}
+  public virtual void onDuringinteract() {}
+  public virtual void onStartInteract() {}
+  public virtual void onStopInteract() {}
 
   void Awake() {
     IsCurrentlyInteracting = false;
@@ -25,10 +25,11 @@ public abstract class Interactable : MonoBehaviour, IInteractable {
     if (Input.GetKeyDown(interactKey)) {
       onStartInteract();
       IsCurrentlyInteracting = true;
-      interact();
-    } else {
+    } else if (Input.GetKeyUp(interactKey)) {
       onStopInteract();
       IsCurrentlyInteracting = false;
+    } else if (Input.GetKey(interactKey)) {
+      onDuringinteract();
     }
   }
 }

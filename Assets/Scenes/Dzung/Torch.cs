@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Torch : MonoBehaviour {
 
-	private int torchValue = 1;
+	public int torchValue = 1;
 	public Material matColor_lit;
 	public Material matColor_regular;
 	private TorchSequence ts;
@@ -44,12 +44,10 @@ public class Torch : MonoBehaviour {
 
 	void OnTriggerEnter(Collider col) {
 		colliding = true;
-		Debug.Log ("colliding");
 	}
 
 	void OnTriggerExit(Collider col) {
 		colliding = false;
-		Debug.Log ("not colliding");
 	}
 
 }

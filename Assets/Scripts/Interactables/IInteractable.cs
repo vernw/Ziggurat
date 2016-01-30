@@ -2,5 +2,5 @@
 using System.Collections;
 
 public interface IInteractable {
-  void interact();
+    void interact();
 }

@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Torch : MonoBehaviour {
 
-	public int torchValue = 1;
+	public int torchValue;
 	public Material matColor_lit;
 	public Material matColor_regular;
 	private TorchSequence ts;

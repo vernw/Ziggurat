@@ -14,7 +14,7 @@ public class Sequence : MonoBehaviour {
 	void OnTriggerEnter(Collider col) {
 		if (col.gameObject == interactionTrigger) {
 			TorchSequence ts = FindObjectOfType<TorchSequence> ();
-			ts.SelectedSequence = sequence;
+			ts.UserSequence = sequence;
 		}
 	}
 }

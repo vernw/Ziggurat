@@ -50,8 +50,8 @@ public class PlayerControl : MonoBehaviour
                 CancelInvoke("DarknessDamagePerSecond");
         }
     }
-
-  public GameObject respawnPoint;
+		
+    public GameObject respawnPoint;
 	public float walkSpeed = 0.15f;
 	public float runSpeed = 1.0f;
 	public float sprintSpeed = 2.0f;

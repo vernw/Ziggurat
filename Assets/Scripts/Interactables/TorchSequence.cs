@@ -6,12 +6,25 @@ public class TorchSequence : MonoBehaviour {
 
 	public List<Torch> torches;
 
-	public int[,] sequence = new int[,] {{1}, {1,2}, {1,2,3},{ 1, 2, 3, 4 }};
-	public int[] sequence2 = new int[] { 1, 2, 3, 4 };
+	public int[] sequence1 = new int[] {1};
+	public int[] sequence2 = new int[] {1,2};
+	public int[] sequence3 = new int[] {1,2,3};
+	public int[] sequence4 = new int[] {1,2,3,4};
 
-	private int selectedSequence;
+	private int userSequence;
 
-	public int SelectedSequence {
+	public int UserSequence {
+		get {
+			return userSequence;
+		}
+		set {
+			userSequence = value;
+		}
+	}
+
+	private int[] selectedSequence;
+
+	public int[] SelectedSequence {
 		get {
 			return selectedSequence;
 		}
@@ -22,15 +35,15 @@ public class TorchSequence : MonoBehaviour {
 
 	void Update () {
 		//retrieve sequence
-		if (torches.Count > 3) {
-			Debug.Log ("SELECTED SEQUENCE: " + selectedSequence);
-			Debug.Log ("TORCH COUNT: " + torches.Count);
+		if (torches.Count > userSequence) {
+			Debug.Log (userSequence);
+			selectedSequence = determineSequence (userSequence);
 			int match = 1;
 			//Debug.Log (torches.Count);
 			//check sequence
 			for (int i = 0; i < torches.Count; i++) {
-				Debug.Log ("CHECKING: " + torches [i].torchValue + "|" + sequence2[i]);// [selectedSequence,i]);
-				if (torches [i].torchValue != sequence2[i]) {//	 [selectedSequence, i]) {
+				Debug.Log ("CHECKING: " + torches [i].torchValue + "|" + selectedSequence[i]);// [selectedSequence,i]);
+				if (torches [i].torchValue != selectedSequence[i]) {//	 [selectedSequence, i]) {
 					match = 0;
 					continue;
 				}
@@ -56,6 +69,18 @@ public class TorchSequence : MonoBehaviour {
 		for (int i = 0; i < torches.Count; i++) {
 			torches [i].deactivate ();
 			torches.Remove (torches [i]);
+		}
+	}
+
+	public int[] determineSequence(int sequence) {
+		if (sequence == 0) {
+			return sequence1;
+		} else if (sequence == 1) {
+			return sequence2;
+		} else if (sequence == 2) {
+			return sequence3;
+		} else {
+			return sequence4;
 		}
 	}
 }

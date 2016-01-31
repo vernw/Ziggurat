@@ -293,7 +293,7 @@ public class PlayerControl : MonoBehaviour
     public void DarknessDamagePerSecond()
     {
         // Add damage animations/overlays here
-        // Subtracts damage from health total until (lit == true) via InvokeRepeat; will be cancelled automatically
+        // Subtracts damage from health total until (lightCounter > 0) via InvokeRepeat; will be cancelled automatically otherwise
         if (lightCounter <= 0)
         {
             health -= darknessDamage;

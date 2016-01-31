@@ -11,5 +11,8 @@ public class PlayerHealthEditor : Editor {
     if(GUILayout.Button("Kill")) {
       playerHealth.takeDamage(100.0f);
     }
+    if(GUILayout.Button("10 Damage")) {
+      playerHealth.takeDamage(10.0f);
+    }
   }
 }

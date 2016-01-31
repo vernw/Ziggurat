@@ -4,22 +4,25 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour {
   public GameObject respawnPoint;
+  public const float MAX_HEALTH = 100.0f;
 
   [SerializeField]
-  private float _health = 100.0f;
+  private float _health = MAX_HEALTH;
   public float health
   {
     get { return _health; }
-    set
-    {
+    set {
       _health = value;
-      if (_health > 100.0f)
-        _health = 100.0f;
+
+      if (_health > MAX_HEALTH)
+        _health = MAX_HEALTH;
       else if (_health <= 0.0f)
       {
         _health = 0.0f;
         onDead();
       }
+
+      updateHealthBar();
     }
   }
 
@@ -78,20 +81,28 @@ public class PlayerHealth : MonoBehaviour {
     }
   }
 
-  public bool isLit()
-  {
-    if (lightCounter > 0)
-      return true;
-    else
-      return false;
+  public bool isLit() {
+    return lightCounter > 0;
   }
 
   public void takeDamage(float damage) {
     health -= damage;
   }
 
+  public void updateHealthBar() {
+    GameObject healthBar = GameObject.FindWithTag("HP");
+    GameObject maxHealthBar = GameObject.FindWithTag("MaxHP");
+
+    RectTransform healthBarRectTransform = healthBar.GetComponent<RectTransform>();
+    RectTransform maxHealthBarRectTransform = maxHealthBar.GetComponent<RectTransform>();
+
+    Rect maxHealthBarRect = maxHealthBarRectTransform.rect;
+
+    healthBarRectTransform.sizeDelta = new Vector2(maxHealthBarRect.width, maxHealthBarRect.height * (health / MAX_HEALTH));
+  }
+
   public void onDead() {
-    health = 100.0f;
+    health = MAX_HEALTH;
     Debug.Log("Dead");
     if (respawnPoint == null)
       respawnPoint = GameObject.FindWithTag("Respawn");

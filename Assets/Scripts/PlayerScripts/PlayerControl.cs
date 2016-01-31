@@ -29,22 +29,23 @@ public class PlayerControl : MonoBehaviour
     [SerializeField]
     private float damageTick = 1.0f;
 
-    // Lit state; calls coroutine to subtract health per second when false
+    // Light counter; repeats darkness damage when (lightCounter == 0)
     [SerializeField]
-    private bool _lit = true;
-    public bool lit
+    private int _lightCounter = 0;
+    public int lightCounter
     {
-        get { return _lit; }
+        get { return _lightCounter; }
         set
         {
-            _lit = value;
-            if (!_lit)
+            _lightCounter = value;
+            if (_lightCounter <= 0)
             {
+                _lightCounter = 0;
                 // Prevent duplicate calling of damage function
                 CancelInvoke("DarknessDamagePerSecond");
                 InvokeRepeating("DarknessDamagePerSecond", damageTick, damageTick);
             }
-            else if (_lit)
+            else if (_lightCounter > 0)
                 CancelInvoke("DarknessDamagePerSecond");
         }
     }
@@ -110,8 +111,6 @@ public class PlayerControl : MonoBehaviour
 
         // Turns off collisions between interaction buffer and light/fire sources
         InteractionTriggerSetup();
-
-        lit = true;
 	}
 
     public void InteractionTriggerSetup()
@@ -276,28 +275,26 @@ public class PlayerControl : MonoBehaviour
 		}
 	}
 
-    // Lit state true when inside light collider
-    public void OnTriggerStay (Collider col)
+    // Light count increases when entering light collider
+    public void OnTriggerEnter (Collider col)
     {
         //Debug.Log("Collision Stay " + col.gameObject.tag);
         if (col.gameObject.tag == "Light" || col.gameObject.tag == "Fire")
-            lit = true;
-        else
-            lit = false;
+            lightCounter++;
     }
 
-    // Enforces false on exits
+    // Light count decreases on exiting light collider
     public void OnTriggerExit (Collider col)
     {
         if (col.gameObject.tag == "Light" || col.gameObject.tag == "Fire")
-            lit = false;
+            lightCounter--;
     }
 
     public void DarknessDamagePerSecond()
     {
         // Add damage animations/overlays here
         // Subtracts damage from health total until (lit == true) via InvokeRepeat; will be cancelled automatically
-        if (!lit)
+        if (lightCounter <= 0)
         {
             health -= darknessDamage;
             Debug.Log("Health: " + health + ". Time: " + Time.timeSinceLevelLoad);
@@ -321,7 +318,10 @@ public class PlayerControl : MonoBehaviour
 
     public bool isLit()
     {
-        return lit;
+        if (lightCounter > 0)
+            return true;
+        else
+            return false;
     }
 
     public bool isDead()

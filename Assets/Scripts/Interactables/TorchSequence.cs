@@ -35,6 +35,17 @@ public class TorchSequence : MonoBehaviour {
 		}
 	}
 
+	private int puzzleLight;
+
+	public int PuzzleLight {
+		get {
+			return puzzleLight;
+		}
+		set {
+			puzzleLight = value;
+		}
+	}
+
 	void Update () {
 		//retrieve sequence
 		if (torches.Count > userSequence) {
@@ -50,9 +61,8 @@ public class TorchSequence : MonoBehaviour {
 				}
 			}
 			if (match == 1) {
-				Debug.Log ("LIGHTS ON");
-				Debug.Log (userSequence);
-				lights [userSequence].GetComponent<LightController> ().activate();
+				Debug.Log ("LIGHTS ON " + puzzleLight);
+				lights [puzzleLight].GetComponent<LightController> ().activate();
 			}
 			StartCoroutine (resetTorches ());
 		}
@@ -84,6 +94,7 @@ public class TorchSequence : MonoBehaviour {
 		} else if (sequence == 2) {
 			return sequence3;
 		} else {
+			Debug.Log("hit sequence 4");
 			return sequence4;
 		}
 	}

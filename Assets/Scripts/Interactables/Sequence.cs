@@ -4,8 +4,7 @@ using System.Collections;
 public class Sequence : MonoBehaviour {
 
 	public int sequence;
-
-	public int light_trigger;
+	public int lightTrigger;
 
 	private GameObject interactionTrigger;
 
@@ -16,7 +15,10 @@ public class Sequence : MonoBehaviour {
 	void OnTriggerEnter(Collider col) {
 		if (col.gameObject == interactionTrigger) {
 			TorchSequence ts = FindObjectOfType<TorchSequence> ();
+			Debug.Log (lightTrigger);
+			Debug.Log (sequence);
 			ts.UserSequence = sequence;
+			ts.PuzzleLight = lightTrigger;
 		}
 	}
 }

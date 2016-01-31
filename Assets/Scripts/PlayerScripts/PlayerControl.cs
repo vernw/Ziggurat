@@ -16,11 +16,12 @@ public class PlayerControl : MonoBehaviour
             else if (_health <= 0.0f)
             {
                 _health = 0.0f;
-                dead = true;
+                onDead();
             }
         }
     }
 
+  public GameObject respawnPoint;
 	public float walkSpeed = 0.15f;
 	public float runSpeed = 1.0f;
 	public float sprintSpeed = 2.0f;
@@ -56,8 +57,7 @@ public class PlayerControl : MonoBehaviour
 
 	private bool run;
 	private bool sprint;
-    private bool isMoving;
-    private bool dead = false;
+  private bool isMoving;
 
 	// fly
 	private bool fly = false;
@@ -244,8 +244,16 @@ public class PlayerControl : MonoBehaviour
 		return sprint && !aim && (isMoving);
 	}
 
-    public bool isDead()
-    {
-        return dead;
-    }
+  public void takeDamage(float damage) {
+    health -= damage;
+  }
+
+  public void onDead() {
+    health = 100.0f;
+    Debug.Log("Dead");
+    if (respawnPoint == null)
+      respawnPoint = GameObject.FindWithTag("Respawn");
+    this.transform.position = respawnPoint.transform.position;
+  }
+
 }

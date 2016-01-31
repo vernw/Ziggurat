@@ -62,9 +62,11 @@ public class TorchSequence : MonoBehaviour {
 			}
 			if (match == 1) {
 				Debug.Log ("LIGHTS ON " + puzzleLight);
-				lights [puzzleLight].GetComponent<LightController> ().activate();
+				lights [puzzleLight].GetComponent<LightController> ().activate ();
+				StartCoroutine (resetTorches (1));
+			} else {
+				StartCoroutine (resetTorches (0));
 			}
-			StartCoroutine (resetTorches ());
 		}
 	}
 
@@ -78,10 +80,18 @@ public class TorchSequence : MonoBehaviour {
 		Debug.Log ("Removing torch:" + torch.torchValue);
 	}
 
-	IEnumerator resetTorches() {
+	IEnumerator resetTorches(int success) {
 		yield return new WaitForSeconds (2f);
 		for (int i = 0; i < torches.Count; i++) {
-			torches [i].deactivate ();
+			if (success == 0) {
+				torches [i].deactivate ();
+			} else {
+				//start to dim current light
+				int currentLight = puzzleLight - 1;
+				if (currentLight >= 0) {
+					lights [currentLight].GetComponent<LightController> ().deactivate ();
+				}
+			}
 			removeTorch (torches [i]);
 		}
 	}
@@ -94,7 +104,6 @@ public class TorchSequence : MonoBehaviour {
 		} else if (sequence == 2) {
 			return sequence3;
 		} else {
-			Debug.Log("hit sequence 4");
 			return sequence4;
 		}
 	}

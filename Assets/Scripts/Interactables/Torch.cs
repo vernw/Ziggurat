@@ -6,6 +6,7 @@ public class Torch : Interactable {
 	public Material matColor_lit;
 	public Material matColor_regular;
 	private TorchSequence ts;
+	GameObject child;
 
 	private bool isLit;
 	public bool Light {
@@ -19,6 +20,7 @@ public class Torch : Interactable {
 
 	void Start() {
 		ts = FindObjectOfType<TorchSequence> ();	
+		child = this.gameObject.transform.FindChild ("FireMobile").gameObject;
 	}
 
   public override void onStartInteract() {
@@ -33,11 +35,12 @@ public class Torch : Interactable {
 
   public void activate() {
     Light = true;
-    this.GetComponent<Renderer> ().material = matColor_lit;
+	child.SetActive (true);
+	child.GetComponent<ParticleSystem> ().Play ();
   }
 
   public void deactivate() {
     Light = false;
-    this.GetComponent<Renderer> ().material = matColor_regular;
+	child.SetActive (false);
   }
 }

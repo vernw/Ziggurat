@@ -21,8 +21,39 @@ public class PlayerControl : MonoBehaviour
             }
         }
     }
+    
+    // How much damage per tick of damage
+    [SerializeField]
+    private float darknessDamage = 2.0f;
 
-  public GameObject respawnPoint;
+    // Damage tick in seconds
+    [SerializeField]
+    private float damageTick = 1.0f;
+
+    // Light counter; repeats darkness damage when (lightCounter == 0)
+    [SerializeField]
+    private int _lightCounter = 0;
+    public int lightCounter
+    {
+        get { return _lightCounter; }
+        set
+        {
+            _lightCounter = value;
+            if (_lightCounter <= 0)
+            {
+                _lightCounter = 0;
+                // Prevent duplicate calling of damage function
+                CancelInvoke("DarknessDamagePerSecond");
+                InvokeRepeating("DarknessDamagePerSecond", damageTick, damageTick);
+            }
+            else if (_lightCounter > 0)
+                CancelInvoke("DarknessDamagePerSecond");
+        }
+    }
+
+    public float walkSpeed = 0.15f;
+
+    public GameObject respawnPoint;
 	public float walkSpeed = 0.15f;
 	public float runSpeed = 1.0f;
 	public float sprintSpeed = 2.0f;
@@ -80,7 +111,24 @@ public class PlayerControl : MonoBehaviour
 		groundedBool = Animator.StringToHash("Grounded");
 		distToGround = GetComponent<Collider>().bounds.extents.y;
 		sprintFactor = sprintSpeed / runSpeed;
+
+        // Turns off collisions between interaction buffer and light/fire sources
+        InteractionTriggerSetup();
 	}
+
+    public void InteractionTriggerSetup()
+    {
+        GameObject[] lightArray = GameObject.FindGameObjectsWithTag("Light");
+        GameObject[] fireArray = GameObject.FindGameObjectsWithTag("Fire");
+        foreach (GameObject lightSource in lightArray)
+        {
+            Physics.IgnoreCollision(transform.GetChild(2).GetComponent<Collider>(), lightSource.transform.GetComponent<Collider>());
+        }
+        foreach (GameObject fireSource in lightArray)
+        {
+            Physics.IgnoreCollision(transform.GetChild(2).GetComponent<Collider>(), fireSource.transform.GetComponent<Collider>());
+        }
+    }
 
 	bool IsGrounded() {
 		return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
@@ -230,6 +278,32 @@ public class PlayerControl : MonoBehaviour
 		}
 	}
 
+    // Light count increases when entering light collider
+    public void OnTriggerEnter (Collider col)
+    {
+        //Debug.Log("Collision Stay " + col.gameObject.tag);
+        if (col.gameObject.tag == "Light" || col.gameObject.tag == "Fire")
+            lightCounter++;
+    }
+
+    // Light count decreases on exiting light collider
+    public void OnTriggerExit (Collider col)
+    {
+        if (col.gameObject.tag == "Light" || col.gameObject.tag == "Fire")
+            lightCounter--;
+    }
+
+    public void DarknessDamagePerSecond()
+    {
+        // Add damage animations/overlays here
+        // Subtracts damage from health total until (lightCounter > 0) via InvokeRepeat; will be cancelled automatically otherwise
+        if (lightCounter <= 0)
+        {
+            health -= darknessDamage;
+            Debug.Log("Health: " + health + ". Time: " + Time.timeSinceLevelLoad);
+        }
+    }
+
 	public bool IsFlying()
 	{
 		return fly;
@@ -244,6 +318,14 @@ public class PlayerControl : MonoBehaviour
 	{
 		return sprint && !aim && (isMoving);
 	}
+    
+    public bool isLit()
+    {
+        if (lightCounter > 0)
+            return true;
+        else
+            return false;
+    }
 
   public void takeDamage(float damage) {
     health -= damage;
@@ -257,5 +339,4 @@ public class PlayerControl : MonoBehaviour
     this.transform.position = respawnPoint.transform.position;
     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
   }
-
 }

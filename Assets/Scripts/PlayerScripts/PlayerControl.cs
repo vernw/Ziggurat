@@ -316,14 +316,14 @@ public class PlayerControl : MonoBehaviour
 	{
 		return sprint && !aim && (isMoving);
 	}
-    
-    public bool isLit()
-    {
-        if (lightCounter > 0)
-            return true;
-        else
-            return false;
-    }
+
+  public bool isLit()
+  {
+    if (lightCounter > 0)
+      return true;
+    else
+      return false;
+  }
 
   public void takeDamage(float damage) {
     health -= damage;
@@ -334,7 +334,8 @@ public class PlayerControl : MonoBehaviour
     Debug.Log("Dead");
     if (respawnPoint == null)
       respawnPoint = GameObject.FindWithTag("Respawn");
-    this.transform.position = respawnPoint.transform.position;
+    if (respawnPoint != null)
+      this.transform.position = respawnPoint.transform.position;
     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
   }
 }

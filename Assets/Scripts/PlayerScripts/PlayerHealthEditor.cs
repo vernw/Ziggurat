@@ -2,14 +2,14 @@ using UnityEngine;
 using System.Collections;
 using UnityEditor;
 
-[CustomEditor(typeof(PlayerControl))]
-public class PlayerControlEditor : Editor {
+[CustomEditor(typeof(PlayerHealth))]
+public class PlayerHealthEditor : Editor {
   public override void OnInspectorGUI() {
     DrawDefaultInspector();
 
-    PlayerControl playerControl = (PlayerControl) target;
+    PlayerHealth playerHealth = (PlayerHealth) target;
     if(GUILayout.Button("Kill")) {
-      playerControl.takeDamage(100.0f);
+      playerHealth.takeDamage(100.0f);
     }
   }
 }

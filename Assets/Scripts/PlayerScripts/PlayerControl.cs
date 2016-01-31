@@ -21,7 +21,31 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-	public float walkSpeed = 0.15f;
+    // How much damage per tick of damage
+    [SerializeField]
+    private float darknessDamage = 2.0f;
+
+    // Damage tick in seconds
+    [SerializeField]
+    private float damageTick = 1.0f;
+
+    // Lit state; calls coroutine to subtract health per second when false
+    [SerializeField]
+    private bool _lit = true;
+    public bool lit
+    {
+        get { return _lit; }
+        set
+        {
+            _lit = value;
+            if (_lit == false)
+                InvokeRepeating("DarknessDamagePerSecond", damageTick, damageTick);
+            else if (_lit)
+                CancelInvoke("DarknessDamagePerSecond");
+        }
+    }
+
+    public float walkSpeed = 0.15f;
 	public float runSpeed = 1.0f;
 	public float sprintSpeed = 2.0f;
 	public float flySpeed = 4.0f;
@@ -229,6 +253,37 @@ public class PlayerControl : MonoBehaviour
 		}
 	}
 
+    // Lit state true when entering light collider
+    public void OnTriggerEnter (Collider col)
+    {
+        Debug.Log("Collision Enter " + col.gameObject.tag);
+        if (col.gameObject.tag == "Light" || col.gameObject.tag == "Fire")
+        {
+            lit = true;
+        }
+    }
+
+    // Lit state false when leaving light collider
+    public void OnTriggerExit (Collider col)
+    {
+        print("Collision Exit " + col.gameObject.tag);
+        if (col.gameObject.tag == "Light" || col.gameObject.tag == "Fire")
+        {
+            lit = false;
+        }
+    }
+
+    public void DarknessDamagePerSecond()
+    {
+        // Add damage animations/overlays here
+        // Subtracts damage from health total until (lit == true) via InvokeRepeat; will be cancelled automatically
+        if (!lit)
+        {
+            health -= darknessDamage;
+            Debug.Log("Health: " + health + ". Time: " + Time.timeSinceLevelLoad);
+        }
+    }
+
 	public bool IsFlying()
 	{
 		return fly;
@@ -243,6 +298,11 @@ public class PlayerControl : MonoBehaviour
 	{
 		return sprint && !aim && (isMoving);
 	}
+
+    public bool isLit()
+    {
+        return lit;
+    }
 
     public bool isDead()
     {

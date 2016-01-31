@@ -5,6 +5,12 @@ public class Interactable : MonoBehaviour, IInteractable {
   private GameObject interactionTrigger;
   private bool colliding;
   private bool isCurrentlyInteracting;
+  private GameObject playerInteracting;
+  public GameObject PlayerInteracting {
+    get {
+      return playerInteracting;
+    }
+  }
   public bool IsCurrentlyInteracting {
     get {
       return isCurrentlyInteracting;
@@ -23,6 +29,7 @@ public class Interactable : MonoBehaviour, IInteractable {
     IsCurrentlyInteracting = false;
     colliding = false;
     interactionTrigger = GameObject.FindWithTag("InteractionTrigger");
+    playerInteracting = GameObject.FindWithTag("Player");
   }
 
   void Update() {

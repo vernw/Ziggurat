@@ -6,10 +6,12 @@ public class TorchSequence : MonoBehaviour {
 
 	public List<Torch> torches;
 
-	public int[] sequence1 = new int[] {1};
-	public int[] sequence2 = new int[] {1,2};
-	public int[] sequence3 = new int[] {1,2,3};
-	public int[] sequence4 = new int[] {1,2,3,4};
+	private int[] sequence1 = new int[] {1};
+	private int[] sequence2 = new int[] {1,2};
+	private int[] sequence3 = new int[] {1,2,3};
+	private int[] sequence4 = new int[] {1,2,3,4};
+
+	public Light[] lights = new Light[10];
 
 	private int userSequence;
 
@@ -39,17 +41,18 @@ public class TorchSequence : MonoBehaviour {
 			Debug.Log (userSequence);
 			selectedSequence = determineSequence (userSequence);
 			int match = 1;
-			//Debug.Log (torches.Count);
 			//check sequence
 			for (int i = 0; i < torches.Count; i++) {
-				Debug.Log ("CHECKING: " + torches [i].torchValue + "|" + selectedSequence[i]);// [selectedSequence,i]);
-				if (torches [i].torchValue != selectedSequence[i]) {//	 [selectedSequence, i]) {
+				Debug.Log ("CHECKING: " + torches [i].torchValue + "|" + selectedSequence[i]);
+				if (torches [i].torchValue != selectedSequence[i]) {
 					match = 0;
 					continue;
 				}
 			}
 			if (match == 1) {
 				Debug.Log ("LIGHTS ON");
+				Debug.Log (userSequence);
+				lights [userSequence].GetComponent<LightController> ().activate();
 			}
 			StartCoroutine (resetTorches ());
 		}
@@ -62,13 +65,14 @@ public class TorchSequence : MonoBehaviour {
 
 	public void removeTorch(Torch torch) {
 		torches.Remove (torch);
+		Debug.Log ("Removing torch:" + torch.torchValue);
 	}
 
 	IEnumerator resetTorches() {
-		yield return new WaitForSeconds (.9f);
+		yield return new WaitForSeconds (2f);
 		for (int i = 0; i < torches.Count; i++) {
 			torches [i].deactivate ();
-			torches.Remove (torches [i]);
+			removeTorch (torches [i]);
 		}
 	}
 

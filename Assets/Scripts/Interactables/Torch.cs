@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Torch : Interactable {
-	public int torchValue = 1;
+	public int torchValue;
 	public Material matColor_lit;
 	public Material matColor_regular;
 	private TorchSequence ts;
@@ -29,8 +29,6 @@ public class Torch : Interactable {
       activate();
       ts.addTorch (this);
     }
-
-    //isLit = !isLit;
   }
 
   public void activate() {

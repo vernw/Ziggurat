@@ -332,10 +332,10 @@ public class PlayerControl : MonoBehaviour
   public void onDead() {
     health = 100.0f;
     Debug.Log("Dead");
-    if (respawnPoint == null)
+    /*if (respawnPoint == null)
       respawnPoint = GameObject.FindWithTag("Respawn");
-    if (respawnPoint != null)
-      this.transform.position = respawnPoint.transform.position;
+    this.transform.position = respawnPoint.transform.position;
+    */
     SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
   }
 }

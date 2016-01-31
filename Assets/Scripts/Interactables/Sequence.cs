@@ -5,6 +5,8 @@ public class Sequence : MonoBehaviour {
 
 	public int sequence;
 
+	public int light_trigger;
+
 	private GameObject interactionTrigger;
 
 	void Awake() {

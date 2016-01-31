@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -254,6 +255,7 @@ public class PlayerControl : MonoBehaviour
     if (respawnPoint == null)
       respawnPoint = GameObject.FindWithTag("Respawn");
     this.transform.position = respawnPoint.transform.position;
+    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
   }
 
 }

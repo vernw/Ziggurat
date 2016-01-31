@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using DG.Tweening;
+using UnityStandardAssets.ImageEffects;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PressAnyKey : MonoBehaviour
 {
@@ -8,17 +10,19 @@ public class PressAnyKey : MonoBehaviour
     private TextMesh titleTextMesh;
     public float faded;
     public float solid;
+    
+    public Camera mainCamera;
+    public Camera target1;
+    public Camera target2;
+    public Vector3 target1Pos;
+    public Vector3 target2Pos;
+    public Quaternion target1Rot;
+    public Quaternion target2Rot;
 
-    public Camera menuCamera;
-
-    public Camera gameCamera;
-    public Vector3 gameCameraPos;
-    public Quaternion gameCameraRot;
-
-    void Awake()
-    {
-        gameCamera.enabled = false;
-    }
+    public Light flash;
+    public float vignetteIntensity;
+    public GameObject fadeBlack;
+    public float fullBlack = 1;
     
     void Start()
     {
@@ -27,12 +31,16 @@ public class PressAnyKey : MonoBehaviour
         faded = 0.15f;
         solid = 1.0f;
 
-        gameCameraPos = gameCamera.transform.position;
-        gameCameraRot = gameCamera.transform.rotation;
+        mainCamera = Camera.main;
+        target1Pos = target1.transform.position;
+        target1Rot = target1.transform.rotation;
+        target2Pos = target2.transform.position;
+        target2Rot = target2.transform.rotation;
+
+        vignetteIntensity = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<VignetteAndChromaticAberration>().intensity;
 
         InvokeRepeating("FadeOut", 2.0f, 4.5f);
         InvokeRepeating("FadeIn", 4.0f, 4.5f);
-        print(textMesh.color);
     }
 
     // Pulse cycles
@@ -56,27 +64,39 @@ public class PressAnyKey : MonoBehaviour
         DOTween.ToAlpha(() => textMesh.color, x => textMesh.color = x, 0, 2.0f);
         DOTween.ToAlpha(() => titleTextMesh.color, x => titleTextMesh.color = x, 0, 2.0f);
 
-        // Moves and swaps camera
-        menuCamera.transform.DOMove(gameCameraPos, 2.0f);
-        menuCamera.transform.DORotate(gameCameraRot.eulerAngles, 2.0f);
-        Invoke("CameraSwap", 2.5f);
-
-        // Calls Disable() in 2.5 seconds
-        Invoke("Disable", 5.0f);
+        Target1();
     }
 
-    // Swaps the menu camera to the game camera
-    public void CameraSwap()
+    public void Target1()
     {
-        Debug.Log("CameraSwap");
-        gameCamera.enabled = true;
-        menuCamera.enabled = false;
+        // Moves camera to target1
+        mainCamera.transform.DOMove(target1Pos, 1.0f);
+        mainCamera.transform.DORotate(target1Rot.eulerAngles, 1.0f);
+
+        // Flashes light
+        Light lightning = Instantiate(flash);
+
+        // Calls target2's movement
+        Invoke("Target2", 1.6f);
     }
 
-    // Deactivates all menu assets
-    public void Disable()
+    public void Target2()
     {
-        GameObject.FindGameObjectWithTag("Menu").SetActive(false);
+        // Moves camera to target2
+        mainCamera.transform.DOMove(target2Pos, 1.0f);
+        mainCamera.transform.DORotate(target2Rot.eulerAngles, 1.0f);
+
+        // Flashes light
+        Light lightning = Instantiate(flash);
+
+        // Fadeaway
+        DOTween.To(() => vignetteIntensity, x => vignetteIntensity = x, 1f, 2);
+        Invoke("ToGame", 1.2f);
+    }
+
+    public void ToGame()
+    {
+        SceneManager.LoadScene("MainScene");
     }
 
     void Update()

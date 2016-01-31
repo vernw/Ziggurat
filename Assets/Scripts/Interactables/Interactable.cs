@@ -14,7 +14,7 @@ public class Interactable : MonoBehaviour, IInteractable {
     }
   }
 
-  public string interactKey = "r";
+  public string interactKey = "e";
   public virtual void onDuringinteract() {}
   public virtual void onStartInteract() {}
   public virtual void onStopInteract() {}

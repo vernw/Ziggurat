@@ -38,8 +38,12 @@ public class PlayerControl : MonoBehaviour
         set
         {
             _lit = value;
-            if (_lit == false)
+            if (!_lit)
+            {
+                // Prevent duplicate calling of damage function
+                CancelInvoke("DarknessDamagePerSecond");
                 InvokeRepeating("DarknessDamagePerSecond", damageTick, damageTick);
+            }
             else if (_lit)
                 CancelInvoke("DarknessDamagePerSecond");
         }
@@ -103,7 +107,26 @@ public class PlayerControl : MonoBehaviour
 		groundedBool = Animator.StringToHash("Grounded");
 		distToGround = GetComponent<Collider>().bounds.extents.y;
 		sprintFactor = sprintSpeed / runSpeed;
+
+        // Turns off collisions between interaction buffer and light/fire sources
+        InteractionTriggerSetup();
+
+        lit = true;
 	}
+
+    public void InteractionTriggerSetup()
+    {
+        GameObject[] lightArray = GameObject.FindGameObjectsWithTag("Light");
+        GameObject[] fireArray = GameObject.FindGameObjectsWithTag("Fire");
+        foreach (GameObject lightSource in lightArray)
+        {
+            Physics.IgnoreCollision(transform.GetChild(2).GetComponent<Collider>(), lightSource.transform.GetComponent<Collider>());
+        }
+        foreach (GameObject fireSource in lightArray)
+        {
+            Physics.IgnoreCollision(transform.GetChild(2).GetComponent<Collider>(), fireSource.transform.GetComponent<Collider>());
+        }
+    }
 
 	bool IsGrounded() {
 		return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
@@ -253,24 +276,21 @@ public class PlayerControl : MonoBehaviour
 		}
 	}
 
-    // Lit state true when entering light collider
-    public void OnTriggerEnter (Collider col)
+    // Lit state true when inside light collider
+    public void OnTriggerStay (Collider col)
     {
-        Debug.Log("Collision Enter " + col.gameObject.tag);
+        //Debug.Log("Collision Stay " + col.gameObject.tag);
         if (col.gameObject.tag == "Light" || col.gameObject.tag == "Fire")
-        {
             lit = true;
-        }
+        else
+            lit = false;
     }
 
-    // Lit state false when leaving light collider
+    // Enforces false on exits
     public void OnTriggerExit (Collider col)
     {
-        print("Collision Exit " + col.gameObject.tag);
         if (col.gameObject.tag == "Light" || col.gameObject.tag == "Fire")
-        {
             lit = false;
-        }
     }
 
     public void DarknessDamagePerSecond()

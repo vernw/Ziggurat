@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Sacrifice : MonoBehaviour, IInteractable {
-
+public class Sacrifice : Interactable {
     [SerializeField]
     private GameObject _altar;
     public GameObject altar
@@ -33,32 +32,20 @@ public class Sacrifice : MonoBehaviour, IInteractable {
         set { _selected = value; }
     }
 
-    void Start()
-    {
+    void Start() {
         // Keeps sacrifice floating until dropped onto altar
         GetComponent<Rigidbody>().useGravity = false;
         selected = false;
     }
-	
-	public void dropToAltar()
-    {
+
+    private void dropToAltar() {
         // Warps to altar
         gameObject.transform.position = altar.transform.position + new Vector3(0, 2, 0);
     }
 
-    public void interact()
-    {
+    public override void onStartInteract() {
             GetComponent<Rigidbody>().useGravity = true;
             drop = true;
             Debug.Log("Drop!");
-    }
-
-    void Update()
-    {
-        // Drops sacrifice onto Altar on key down
-        if (Input.GetKeyDown(KeyCode.E) && selected)
-        {
-            interact();
-        }
     }
 }

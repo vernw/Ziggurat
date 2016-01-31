@@ -2,5 +2,8 @@
 using System.Collections;
 
 public interface IInteractable {
-    void interact();
+  bool IsCurrentlyInteracting { get; set; }
+  void onDuringinteract();
+  void onStartInteract();
+  void onStopInteract();
 }
